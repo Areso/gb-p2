@@ -1,5 +1,7 @@
 from socket import *
 import argparse
+import json
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p", help="port number", type=int)
@@ -16,9 +18,16 @@ if portnumber is None:
 
 s = socket(AF_INET, SOCK_STREAM)
 s.connect((ipaddress, portnumber))
-msg = 'Hello world'
-s.send(msg.encode('utf-8'))
+msg = {}
+msg["action"] = "presence"
+msg["time"] = time.time()
+msg["type"] = "status"
+user = {}
+user["account_name"] = "Areso"
+user["status"] = "online"
+msg["user"] = user
+msg1 = json.dumps(msg)
+s.send(msg1.encode('utf-8'))
 data = s.recv(1000000)
-#print('Месадж: ', data.decode('ascii'), ', длиной ', len(data), ' байт')
 print('Месадж: ', data.decode('utf-8'), ', длиной ', len(data), ' байт')
 s.close()

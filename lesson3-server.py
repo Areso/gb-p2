@@ -1,6 +1,8 @@
 from socket import *
 import argparse
-import sys
+import json
+import time
+
 
 
 parser = argparse.ArgumentParser()
@@ -23,11 +25,16 @@ s.listen(5)
 try:
     while True:
         client, addr = s.accept()
-        msgfromclient = client.recv(1024).decode('utf-8')
+        msgfromclient = client.recv(102400).decode('utf-8')
+        msgfromclientinjson = json.loads(msgfromclient)
+        print(msgfromclientinjson)
         print("Получен запрос на соединение от %s" % str(addr))
-        timestr = msgfromclient*3
-        timestr = timestr.encode('utf-8')
-        client.send(timestr)
+        myresponse = {}
+        myresponse["response"] = 100
+        myresponse["time"] = time.time()
+        myresponseintext = json.dumps(myresponse)
+        print(myresponseintext)
+        client.send(myresponseintext.encode('utf-8'))
         client.close()
 finally:
     s.close()
