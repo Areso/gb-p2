@@ -38,6 +38,7 @@ def myserverup(myinparameters):
             print(myresponseintext)
             client.send(myresponseintext.encode('utf-8'))
             client.close()
+            return myresponseintext
     finally:
         s.close()
 

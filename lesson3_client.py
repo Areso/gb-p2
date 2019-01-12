@@ -33,8 +33,10 @@ def myconnect(myinparameters):
     msgstr = json.dumps(msg)
     s.send(msgstr.encode('utf-8'))
     data = s.recv(1000000)
-    print('Message: ', data.decode('utf-8'), ', with length ', len(data), ' bytes')
+    messageforuser = 'Message: '+data.decode('utf-8')+', with length '+str(len(data))+' bytes'
+    print(messageforuser)
     s.close()
+    return messageforuser
 
 
 if __name__ == '__main__':
