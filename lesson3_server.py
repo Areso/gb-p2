@@ -52,7 +52,7 @@ def myserverup(myinparameters):
 
 
 if __name__ == '__main__':
-    log.lesson5_server_log_config.setupClientLog()
+    log.lesson5_server_log_config.setupServerLog()
     file_logger = log.lesson5_server_log_config.logging.getLogger("main")
     print(type(file_logger))
     myparameters = parsing()

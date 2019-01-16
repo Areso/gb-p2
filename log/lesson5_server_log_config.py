@@ -1,14 +1,14 @@
 import logging
 from logging import handlers
 
-def setupClientLog():
+def setupServerLog():
     logging.basicConfig(
-        filename="log/client.log",
+        filename="log/server.log",
         format="%(asctime)s %(levelname)-10s %(module)s %(message)s",
         level=logging.INFO
     )
 
 
 if __name__ == '__main__':
-    setupClientLog()
+    setupServerLog()
 
