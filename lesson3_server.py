@@ -19,7 +19,7 @@ def parsing():
     if ipaddress is None:
         ipaddress = ''
     if portnumber is None:
-        portnumber = 7778
+        portnumber = 7779
     nottesting = True
     parameters = [ipaddress, portnumber, nottesting]
     return parameters
@@ -48,7 +48,7 @@ def myserverup(myinparameters):
                 msgfromclient = client.recv(102400).decode('utf-8')
             except:
                 file_logger.error("server socket can't receive data")
-                #sys.exit()
+                sys.exit()
 
             msgfromclientinjson = json.loads(msgfromclient)
             #print(msgfromclientinjson)
@@ -76,8 +76,8 @@ def myserverup(myinparameters):
 if __name__ == '__main__':
     log.lesson5_server_log_config.setupServerLog()
     file_logger = log.lesson5_server_log_config.logging.getLogger("main")
-    mysetup = log.lesson5_server_log_config.mysetup
-    file_logger.addHandler(mysetup)
+    #mysetup = log.lesson5_server_log_config.mysetup
+    #file_logger.addHandler(mysetup)
     print(type(file_logger))
     myparameters = parsing()
     myserverup(myparameters)

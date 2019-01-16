@@ -4,18 +4,10 @@ from logging import handlers
 
 def setupServerLog():
     logging.basicConfig(
-        filename="log/server.log",
         format="%(asctime)s %(levelname)-10s %(module)s %(message)s",
-        level=logging.INFO
+        level=logging.INFO,
+        handlers=[handlers.TimedRotatingFileHandler(filename='log/server1.log', interval=1, when='d', backupCount=5)]
     )
-    global mysetup
-    mysetup = handlers.TimedRotatingFileHandler(
-        filename="log/server.log",
-        backupCount=5,
-        interval=1,
-        when='m'
-    )
-
 
 
 if __name__ == '__main__':
