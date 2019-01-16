@@ -2,6 +2,7 @@ from socket import *
 import argparse
 import json
 import time
+import sys
 import log.lesson5_client_log_config
 
 
@@ -16,7 +17,7 @@ def parsing():
     if ipaddress is None:
         ipaddress = 'localhost'
     if portnumber is None:
-        portnumber = 7777
+        portnumber = 7778
     parameters = [ipaddress, portnumber]
     return parameters
 
@@ -28,6 +29,7 @@ def myconnect(myinparameters):
         s.connect((myinparameters[0], myinparameters[1]))
     except:
         file_logger.error("server is not answering")
+        sys.exit()
     msg = {}
     msg["action"] = "presence"
     msg["time"] = time.time()
@@ -41,10 +43,14 @@ def myconnect(myinparameters):
         s.send(msgstr.encode('utf-8'))
     except:
         file_logger.error("the server can't receive transmitted data")
+        sys.exit()
+
     try:
         data = s.recv(1000000)
     except:
         file_logger.error("the client can't receive transmitted data")
+        sys.exit()
+
     messageforuser = 'Message: '+data.decode('utf-8')+', with length '+str(len(data))+' bytes'
     print(messageforuser)
     s.close()
