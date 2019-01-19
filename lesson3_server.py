@@ -8,6 +8,22 @@ import log.lesson5_server_log_config
 from log.lesson5_server_log_config import *
 
 
+def trace(func):
+    def wrapper(*args, **kwargs):
+        #print(f'TRACE: calling {func.__name__}() '
+        #      f'with {args}, {kwargs}')
+        called= f'TRACE: calling {func.__name__}() '+f'with {args}, {kwargs}'
+        file_logger.info(called)
+        original_result = func(*args, **kwargs)
+        returned = f'TRACE: calling {func.__name__}() '+f'returned {original_result!r}'
+        file_logger.info(returned)
+        #print(f'TRACE: {func.__name__}() '
+        #      f'returned {original_result!r}')
+
+        return original_result
+    return wrapper
+
+@trace
 def parsing():
     file_logger.info("server parameters parsing")
     parser = argparse.ArgumentParser()
@@ -24,7 +40,7 @@ def parsing():
     parameters = [ipaddress, portnumber, nottesting]
     return parameters
 
-
+@trace
 def myserverup(myinparameters):
     file_logger.info("server connection")
     try:

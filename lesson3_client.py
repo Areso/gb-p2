@@ -5,7 +5,23 @@ import time
 import sys
 import log.lesson5_client_log_config
 
+def trace(func):
+    def wrapper(*args, **kwargs):
+        #print(f'TRACE: calling {func.__name__}() '
+        #      f'with {args}, {kwargs}')
+        called= f'TRACE: calling {func.__name__}() '+f'with {args}, {kwargs}'
+        file_logger.info(called)
+        original_result = func(*args, **kwargs)
+        returned = f'TRACE: calling {func.__name__}() '+f'returned {original_result!r}'
+        file_logger.info(returned)
+        #print(f'TRACE: {func.__name__}() '
+        #      f'returned {original_result!r}')
 
+        return original_result
+    return wrapper
+
+
+@trace
 def parsing():
     file_logger.info("client parameters parsing")
     parser = argparse.ArgumentParser()
@@ -21,7 +37,7 @@ def parsing():
     parameters = [ipaddress, portnumber]
     return parameters
 
-
+@trace
 def myconnect(myinparameters):
     file_logger.info("client connection")
     s = socket(AF_INET, SOCK_STREAM)
