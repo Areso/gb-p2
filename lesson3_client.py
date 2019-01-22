@@ -6,10 +6,18 @@ import sys
 import log.lesson5_client_log_config
 
 def trace(func):
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
+        callstack = '\n'.join([INDENT + line.strip() for line in traceback.format_stack()][:-1])
+        mycallstack = traceback.format_stack()
+        lenofmycallstack = len(traceback.format_stack())
+        lastcall = mycallstack[lenofmycallstack-2].replace('\n', ',')
+        #print(lastcall)
+        #print(callstack)
         #print(f'TRACE: calling {func.__name__}() '
         #      f'with {args}, {kwargs}')
         called= f'TRACE: calling {func.__name__}() '+f'with {args}, {kwargs}'
+        file_logger.info(lastcall)
         file_logger.info(called)
         original_result = func(*args, **kwargs)
         returned = f'TRACE: calling {func.__name__}() '+f'returned {original_result!r}'
