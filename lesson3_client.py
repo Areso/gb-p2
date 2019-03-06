@@ -2,9 +2,36 @@ from socket import *
 import argparse
 import json
 import time
+import sys
+import log.lesson5_client_log_config
+
+def trace(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        callstack = '\n'.join([INDENT + line.strip() for line in traceback.format_stack()][:-1])
+        mycallstack = traceback.format_stack()
+        lenofmycallstack = len(traceback.format_stack())
+        lastcall = mycallstack[lenofmycallstack-2].replace('\n', ',')
+        #print(lastcall)
+        #print(callstack)
+        #print(f'TRACE: calling {func.__name__}() '
+        #      f'with {args}, {kwargs}')
+        called= f'TRACE: calling {func.__name__}() '+f'with {args}, {kwargs}'
+        file_logger.info(lastcall)
+        file_logger.info(called)
+        original_result = func(*args, **kwargs)
+        returned = f'TRACE: calling {func.__name__}() '+f'returned {original_result!r}'
+        file_logger.info(returned)
+        #print(f'TRACE: {func.__name__}() '
+        #      f'returned {original_result!r}')
+
+        return original_result
+    return wrapper
 
 
+@trace
 def parsing():
+    file_logger.info("client parameters parsing")
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", help="port number", type=int)
     parser.add_argument("-a", help="ip addr", type=str)
@@ -14,14 +41,19 @@ def parsing():
     if ipaddress is None:
         ipaddress = 'localhost'
     if portnumber is None:
-        portnumber = 7777
+        portnumber = 7779
     parameters = [ipaddress, portnumber]
     return parameters
 
-
+@trace
 def myconnect(myinparameters):
+    file_logger.info("client connection")
     s = socket(AF_INET, SOCK_STREAM)
-    s.connect((myinparameters[0], myinparameters[1]))
+    try:
+        s.connect((myinparameters[0], myinparameters[1]))
+    except:
+        file_logger.error("server is not answering")
+        sys.exit()
     msg = {}
     msg["action"] = "presence"
     msg["time"] = time.time()
@@ -31,8 +63,18 @@ def myconnect(myinparameters):
     user["status"] = "online"
     msg["user"] = user
     msgstr = json.dumps(msg)
-    s.send(msgstr.encode('utf-8'))
-    data = s.recv(1000000)
+    try:
+        s.send(msgstr.encode('utf-8'))
+    except:
+        file_logger.error("the server can't receive transmitted data")
+        sys.exit()
+
+    try:
+        data = s.recv(1000000)
+    except:
+        file_logger.error("the client can't receive transmitted data")
+        sys.exit()
+
     messageforuser = 'Message: '+data.decode('utf-8')+', with length '+str(len(data))+' bytes'
     print(messageforuser)
     s.close()
@@ -40,5 +82,8 @@ def myconnect(myinparameters):
 
 
 if __name__ == '__main__':
+    log.lesson5_client_log_config.setupClientLog()
+    file_logger = log.lesson5_client_log_config.logging.getLogger("main")
+    print(type(file_logger))
     myparameters = parsing()
     myconnect(myparameters)
